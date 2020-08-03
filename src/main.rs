@@ -4,10 +4,12 @@ mod object;
 use event::{EventX, MiniDispatcher};
 
 #[derive(Debug)]
-pub struct Test {}
+pub struct Test {
+    v: i32,
+}
 impl Test {
     pub fn new() -> Self {
-        Test {}
+        Test { v: 3 }
     }
 
     pub fn abc(&mut self) {
@@ -15,11 +17,22 @@ impl Test {
     }
 }
 
-fn test(_p: &mut Test) {
-    _p.abc();
+fn _test_mini_dispatcher() {
+    let mut d: MiniDispatcher = MiniDispatcher::new();
+    let test = Test::new();
+    let ptr = object::_get_mut_usize(test);
+    d.on(String::from("test"), _event_handler, ptr);
+    d.on(String::from("test"), _event_handler, ptr);
 }
 
 fn main() {
+    let obj = object::Object::new();
+    // let o = unsafe { std::mem::transmute::<*mut object::Object, &mut object::Object>(obj) };
+    
+
+    println!("{:?}", obj);
+    // println!("{:?}", o);
+
     // let x = 5;
     // let y = &x;
     // println!("{}", *y);
@@ -27,25 +40,47 @@ fn main() {
     // println!("{}", y);
 
     // unsafe {
-    let mut d: MiniDispatcher = MiniDispatcher::new();
+    // let d: MiniDispatcher = MiniDispatcher::new();
 
-    
-    let mut p = Test::new();
+    // let p = Test::new();
 
-    
-    
-    
+    // let ptr = &p as *const _ as *mut Test;
+    // let ptr2 = &p as *const _ as *mut usize;
+    // println!("{:?}", ptr);
+    // println!("{:?}", ptr2);
 
-    test(&mut p);
-    test(&mut p);
+    // let ptr = &p as *const _ as *mut Test;
+    // let v = unsafe { &mut *ptr };
+    // v.abc();
+    // println!("{:?}", v);
+
+    // let ptr = &p as *const _ as *mut usize;
+    // let v = unsafe { std::mem::transmute::<*mut usize, &mut Test>(ptr) };
+    // v.abc();
+    // println!("{:?}", v);
+
+    // let ptr2 = &p as *const _ as usize;
+
+    // std::mem::transmute::<*mut usize,Test>(ptr)
+
+    // let t =object::get_unsafe_mut_usize_value::<&mut Test>(ptr);
+    // t.abc();
+
+    // let t = unsafe { std::mem::transmute::<*mut usize, &mut Test>(ptr) };
+    // t.abc();
+
+    // println!("{:?}", t);
+    // println!("{:?}", unsafe { std::mem::transmute::<*mut usize,&Test>(ptr) });
+    // println!("{:?}", unsafe { std::mem::transmute::<*mut usize,&Test>(ptr) });
+
+    // test(&mut p);
+    // test(&mut p);
 
     // let a: i32 = 5;
     // let addr = &a as *const i32 as usize;
     // println!("addr：0x{:X}", addr);
-
     // let paddr = &p as *const _ as usize;
-
-    let paddr = object::get_usize(p);
+    // let paddr = object::get_mut_usize(p);
 
     // println!("paddr：0x{:X}", paddr);
 
@@ -53,7 +88,8 @@ fn main() {
 
     // println!("{:?}", addr);
 
-    d.on(String::from("test"), event_handler, paddr);
+    // d.on(String::from("test"), event_handler, ptr);
+
     // d.on(String::from("test"), event_handler, paddr);
 
     // }
@@ -65,4 +101,31 @@ fn main() {
     // println!("{:?}", d)
 }
 
-fn event_handler(_event: EventX) {}
+// #[derive(Debug)]
+//     pub struct A {
+//         v: i32,
+//     }
+
+// impl A {
+//     pub fn new() -> Self {
+//         A { v: 3 }
+//     }
+
+//     pub fn test(){
+
+//     }
+// }
+
+// fn main2() {
+
+//     let a = A{v:3};
+
+//     let ptr = &a as *const _ as *mut A;
+//     let v = unsafe { &*ptr };
+
+//     let ptr2 = &a as *const _ as *mut usize;
+//     let v1 = unsafe { std::mem::transmute::<*mut usize, &mut A>(ptr2) } as &mut A;
+
+// }
+
+fn _event_handler(_event: EventX) {}

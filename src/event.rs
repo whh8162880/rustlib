@@ -11,7 +11,7 @@ pub type EventFunction = fn(EventX);
 #[derive(Debug)]
 pub struct EventHandler {
     handler: EventFunction,
-    thisobj: usize,
+    thisobj: *mut usize,
 }
 
 #[derive(Debug)]
@@ -19,13 +19,22 @@ pub struct MiniDispatcher {
     event_listeners: HashMap<String, Vec<EventHandler>>,
 }
 
-fn find(_vec: &mut Vec<EventHandler>, _handler: &mut EventHandler) {
+fn find(_vec: &mut Vec<EventHandler>, _handler: &mut EventHandler) -> i16 {
+    let mut index = 0;
+
     for value in _vec.iter_mut() {
-        // assert!(value.thisobj == _handler.thisobj);
+        if value.thisobj == _handler.thisobj && value.handler == _handler.handler {
+            break;
+        }
+        index += 1;
         // let b = object::is_same(&value.thisobj, &_handler.thisobj);
-        // println!("{}", b);
-        if value.handler == _handler.handler {}
     }
+
+    if index == _vec.len() as i16 {
+        index = -1;
+    }
+
+    return index;
 }
 
 impl MiniDispatcher {
@@ -35,7 +44,7 @@ impl MiniDispatcher {
         }
     }
 
-    pub fn on(&mut self, event: String, handler: EventFunction, thisobj: usize) {
+    pub fn on(&mut self, event: String, handler: EventFunction, thisobj: *mut usize) {
         if false == self.event_listeners.contains_key(&event) {
             self.event_listeners.insert(event.clone(), Vec::new());
         }
@@ -45,9 +54,12 @@ impl MiniDispatcher {
         let vec = self.event_listeners.get_mut(&event).unwrap();
         let mut d = EventHandler { handler, thisobj };
 
-        find(vec, &mut d);
+        let i = find(vec, &mut d);
+        println!("{}", i);
 
-        vec.push(d);
+        if i == -1 {
+            vec.push(d);
+        }
 
         // println!("{:?}", vec);
 
@@ -55,7 +67,7 @@ impl MiniDispatcher {
         // t.push(d);
     }
 
-    // pub fn _off(_event: String, _handler: EventFunction, _thisobj: MiniDispatcher) {}
+    pub fn _off(_event: String, _handler: EventFunction, _thisobj: *mut usize) {}
 
     // pub fn _displatch(_event: EventX) {}
 }
