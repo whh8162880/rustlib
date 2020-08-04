@@ -1,24 +1,54 @@
-use crate::event;
-
+use std::collections::HashMap;
 // pub trait IObject<T> {
 //     fn new() -> Self;
 //     fn event(&mut self) -> &mut MiniDispatcher;
 // }
 
 #[derive(Debug)]
+pub struct Component {
+    instance: String, // 组件名
+    name: String,     // 组件变量名
+    ptr: *mut usize,  // 组件内存地址
+}
+
+#[derive(Debug)]
 pub struct Object {
     __obj_id: *mut usize,
+    components: HashMap<String, Component>,
 }
 
 impl Object {
     pub fn new() -> Self {
-        let mut p = Self { __obj_id: &mut 0 };
+        let mut p = Self {
+            __obj_id: &mut 0,
+            components: HashMap::new(),
+        };
         p.create();
         return p;
     }
 
     fn create(&mut self) {
         self.__obj_id = &self as *const _ as *mut usize;
+    }
+
+    pub fn _add_component(&mut self, name: &str, ptr: *mut usize, instance: &str) {
+        if true == self.components.contains_key(name) {
+            self.components.remove(name);
+        }
+        self.components.insert(
+            String::from(name),
+            Component {
+                name: String::from(name),
+                ptr,
+                instance: String::from(instance),
+            },
+        );
+    }
+
+    pub fn _remove_component(&mut self, name: &str) {
+        if true == self.components.contains_key(name) {
+            self.components.remove(name);
+        }
     }
 }
 
