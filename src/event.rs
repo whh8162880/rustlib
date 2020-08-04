@@ -18,6 +18,7 @@ pub struct MiniDispatcher {
     event_listeners: HashMap<String, Vec<EventHandler>>,
 }
 
+#[allow(dead_code)] 
 fn find(_vec: &mut Vec<EventHandler>, _handler: &mut EventHandler) -> i16 {
     let mut index = 0;
 
@@ -37,12 +38,14 @@ fn find(_vec: &mut Vec<EventHandler>, _handler: &mut EventHandler) -> i16 {
 }
 
 impl MiniDispatcher {
+    #[allow(dead_code)] 
     pub fn new() -> Self {
         Self {
             event_listeners: HashMap::new(),
         }
     }
 
+    #[allow(dead_code)] 
     pub fn on(&mut self, event: String, handler: EventFunction, thisobj: *mut usize) {
         if false == self.event_listeners.contains_key(&event) {
             self.event_listeners.insert(event.clone(), Vec::new());

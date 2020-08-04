@@ -18,6 +18,8 @@ pub struct Object {
 }
 
 impl Object {
+
+    #[allow(dead_code)]
     pub fn new() -> Self {
         let mut p = Self {
             __obj_id: &mut 0,
@@ -31,12 +33,9 @@ impl Object {
         self.__obj_id = &self as *const _ as *mut usize;
     }
 
-    pub fn _add_component_t<T>(&mut self, name: &str, instance: &str, target: T) {
+    #[allow(dead_code)]
+    pub fn add_component<T>(&mut self, name: &str, instance: &str, target: T) {
         let ptr = &target as *const _ as *mut usize;
-        self._add_component(name, ptr, instance);
-    }
-
-    pub fn _add_component(&mut self, name: &str, ptr: *mut usize, instance: &str) {
         if true == self.components.contains_key(name) {
             self.components.remove(name);
         }
@@ -50,22 +49,24 @@ impl Object {
         );
     }
 
-    pub fn _remove_component(&mut self, name: &str) {
+    #[allow(dead_code)]
+    pub fn remove_component(&mut self, name: &str) {
         if true == self.components.contains_key(name) {
             self.components.remove(name);
         }
     }
 
-    fn _get_component<T>(&mut self,name:&str) -> Result<&mut T, String> {
+    #[allow(dead_code)]
+    pub fn get_component<T>(&mut self, name: &str) -> Result<&mut T, String> {
         let error = String::from("no exist");
         let v: &mut T;
-        if true == self.components.contains_key(name)  {
+        if true == self.components.contains_key(name) {
             let c = self.components.get_mut(name).unwrap();
             v = unsafe { std::mem::transmute::<*mut usize, &mut T>(c.ptr) };
             Ok(v)
         } else {
             Err(error)
-        }   
+        }
     }
 }
 

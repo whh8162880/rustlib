@@ -26,11 +26,18 @@ fn _test_mini_dispatcher() {
 }
 
 fn main() {
-    let obj = object::Object::new();
-    // let o = unsafe { std::mem::transmute::<*mut object::Object, &mut object::Object>(obj) };
-    
-
+    let mut obj = object::Object::new();
     println!("{:?}", obj);
+    // let o = unsafe { std::mem::transmute::<*mut object::Object, &mut object::Object>(obj) };
+    let test = Test{v:3};
+    println!("{:?}", test);
+    obj.add_component("test", "Test", test);
+
+    println!("object : {:?}", obj);
+
+    let t = obj.get_component::<Test>("test").ok().unwrap();
+    println!("{:?}", t);
+    
     // println!("{:?}", o);
 
     // let x = 5;
