@@ -31,6 +31,11 @@ impl Object {
         self.__obj_id = &self as *const _ as *mut usize;
     }
 
+    pub fn _add_component_t<T>(&mut self, name: &str, instance: &str, target: T) {
+        let ptr = &target as *const _ as *mut usize;
+        self._add_component(name, ptr, instance);
+    }
+
     pub fn _add_component(&mut self, name: &str, ptr: *mut usize, instance: &str) {
         if true == self.components.contains_key(name) {
             self.components.remove(name);
@@ -49,6 +54,18 @@ impl Object {
         if true == self.components.contains_key(name) {
             self.components.remove(name);
         }
+    }
+
+    fn _get_component<T>(&mut self,name:&str) -> Result<&mut T, String> {
+        let error = String::from("no exist");
+        let v: &mut T;
+        if true == self.components.contains_key(name)  {
+            let c = self.components.get_mut(name).unwrap();
+            v = unsafe { std::mem::transmute::<*mut usize, &mut T>(c.ptr) };
+            Ok(v)
+        } else {
+            Err(error)
+        }   
     }
 }
 
@@ -82,7 +99,7 @@ pub fn _get_mut_usize<T>(p: T) -> *mut usize {
     return &p as *const _ as *mut usize;
 }
 
-// pub fn get_unsafe_mut_usize_value<T>(ptr: *mut usize) -> T{
-//     let v = unsafe { std::mem::transmute::<*mut usize, T>(ptr) };
+// pub fn get_unsafe_mut_usize_value<T>(ptr: *mut usize) -> &mut T{
+//     let v = unsafe { std::mem::transmute::<*mut usize, &mut T>(ptr) };
 //     return v;
 // }
