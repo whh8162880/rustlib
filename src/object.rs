@@ -4,6 +4,10 @@ use std::collections::HashMap;
 //     fn event(&mut self) -> &mut MiniDispatcher;
 // }
 
+// pub trait IObject {
+    
+// }
+
 #[derive(Debug)]
 pub struct Component {
     instance: String, // 组件名
@@ -87,8 +91,8 @@ impl Object {
 //         return &mut self._event;
 //     }
 // }
-
-pub fn _is_same<T>(left: &T, right: &T) -> bool {
+#[allow(dead_code)]
+pub fn is_same<T>(left: &T, right: &T) -> bool {
     let a = left as *const _;
     let b = right as *const _;
     let r = a == b;
@@ -96,7 +100,8 @@ pub fn _is_same<T>(left: &T, right: &T) -> bool {
     r
 }
 
-pub fn _get_mut_usize<T>(p: T) -> *mut usize {
+#[allow(dead_code)]
+pub fn get_mut_usize<T>(p: T) -> *mut usize {
     return &p as *const _ as *mut usize;
 }
 

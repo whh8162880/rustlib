@@ -17,26 +17,40 @@ impl Test {
     }
 }
 
-fn _test_mini_dispatcher() {
+#[allow(dead_code)]
+fn test_mini_dispatcher() {
     let mut d: MiniDispatcher = MiniDispatcher::new();
     let test = Test::new();
-    let ptr = object::_get_mut_usize(test);
-    d.on(String::from("test"), _event_handler, ptr);
-    d.on(String::from("test"), _event_handler, ptr);
+    d.on("test", event_handler, &test);
+    d.simple_dispatch("test",&test);
+    d.off("test", event_handler, &test);
+    d.simple_dispatch("test",&test);
 }
 
 fn main() {
-    let mut obj = object::Object::new();
-    println!("{:?}", obj);
-    // let o = unsafe { std::mem::transmute::<*mut object::Object, &mut object::Object>(obj) };
-    let test = Test{v:3};
-    println!("{:?}", test);
-    obj.add_component("test", "Test", test);
 
-    println!("object : {:?}", obj);
+    test_mini_dispatcher();
 
-    let t = obj.get_component::<Test>("test").ok().unwrap();
-    println!("{:?}", t);
+    // let test = Test::new();
+    // let test2 = &test;
+
+    // let ptr = &test as *const _ as *mut usize;
+    // let ptr2 = test2 as *const _ as *mut usize;
+
+    // println!("{:?}  {:?}",ptr,ptr2);
+
+
+    // let mut obj = object::Object::new();
+    // println!("{:?}", obj);
+    // // let o = unsafe { std::mem::transmute::<*mut object::Object, &mut object::Object>(obj) };
+    // let test = Test{v:3};
+    // println!("{:?}", test);
+    // obj.add_component("test", "Test", test);
+
+    // println!("object : {:?}", obj);
+
+    // let t = obj.get_component::<Test>("test").ok().unwrap();
+    // println!("{:?}", t);
     
     // println!("{:?}", o);
 
@@ -135,4 +149,8 @@ fn main() {
 
 // }
 
-fn _event_handler(_event: EventX) {}
+#[allow(dead_code)]
+fn event_handler(event: EventX) {
+    let data =  unsafe { std::mem::transmute::<*mut usize, &mut Test>(event.data) };
+    println!("event data {:?}",data);
+}
