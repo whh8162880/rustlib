@@ -1,13 +1,20 @@
 mod event;
 mod object;
-
+mod date;
+mod amf;
 
 use event::{EventX, MiniDispatcher};
-use std::{sync::Mutex, collections::HashMap};
+// use futures::executor::block_on;
+
+use futures::executor::block_on;
+
+#[allow(unused_imports)]
+use std::time::{Duration, Instant};
+// use std::{sync::Mutex, collections::HashMap};
 // use amf::AMFData;
 // use serde_amf::AMFData;
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Test {
     v: i32,
 }
@@ -59,11 +66,31 @@ fn event_handler_2(event: EventX) {
 //         Mutex::new(m)
 //     })
 // }
-
+#[allow(unused_must_use)]
 fn main() {
-    test_mini_dispatcher();
-
+    // test_mini_dispatcher();
+    block_on(date::test());
+    // date::test();
     // let test = Test::new();
+    // let mut now = Instant::now();
+
+    // for _i in 0..10000000 {
+    //     // let p = &test as *const _ as *mut usize;
+    // }
+
+    // println!("{}", now.elapsed().as_millis());
+
+    // now = Instant::now();
+
+
+    // for _i in 0..10000000 {
+    //     unsafe { std::mem::transmute::<*mut usize, &mut Test>(&test as *const _ as *mut usize) };
+    // }
+
+    // println!("{} ", now.elapsed().as_millis());
+    // println!("{:?}",unsafe { std::mem::transmute::<*mut usize, &mut Test>(&test as *const _ as *mut usize)});
+
+    
     // let test2 = &test;
 
     // let ptr = &test as *const _ as *mut usize;
