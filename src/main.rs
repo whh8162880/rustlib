@@ -1,7 +1,11 @@
 mod event;
 mod object;
 
+
 use event::{EventX, MiniDispatcher};
+use std::{sync::Mutex, collections::HashMap};
+// use amf::AMFData;
+// use serde_amf::AMFData;
 
 #[derive(Debug)]
 pub struct Test {
@@ -20,15 +24,43 @@ impl Test {
 #[allow(dead_code)]
 fn test_mini_dispatcher() {
     let mut d: MiniDispatcher = MiniDispatcher::new();
-    let test = Test::new();
+    let test = Test { v: 3 };
     d.on("test", event_handler, &test);
-    d.simple_dispatch("test",&test);
-    d.off("test", event_handler, &test);
-    d.simple_dispatch("test",&test);
+    d.on("test2", event_handler_2, &test);
+    d.dispatch("test", &test);
+    d.dispatch("test2", &1);
+    // d.off("test", event_handler, &test);
+    // d.dispatch("test", &test);
 }
 
-fn main() {
+#[allow(dead_code)]
+fn event_handler(event: EventX) {
+    let data = unsafe { std::mem::transmute::<*mut usize, &mut Test>(event.data) };
+    data.abc();
+    println!("event data {:?}", data);
+}
 
+#[allow(dead_code)]
+fn event_handler_2(event: EventX) {
+    let data = unsafe { std::mem::transmute::<*mut usize, &mut i32>(event.data) };
+    println!("event data {:?}", data);
+}
+
+// struct Foo<'a>{
+//     i:&'a i32,
+// }
+
+// fn global_data() -> &'static Mutex<HashMap<i32, String>> {
+//     static INSTANCE: OnceCell<Mutex<HashMap<i32, String>>> = OnceCell::new();
+//     INSTANCE.get_or_init(|| {
+//         let mut m = HashMap::new();
+//         m.insert(13, "Spica".to_string());
+//         m.insert(74, "Hoyten".to_string());
+//         Mutex::new(m)
+//     })
+// }
+
+fn main() {
     test_mini_dispatcher();
 
     // let test = Test::new();
@@ -38,7 +70,6 @@ fn main() {
     // let ptr2 = test2 as *const _ as *mut usize;
 
     // println!("{:?}  {:?}",ptr,ptr2);
-
 
     // let mut obj = object::Object::new();
     // println!("{:?}", obj);
@@ -51,7 +82,7 @@ fn main() {
 
     // let t = obj.get_component::<Test>("test").ok().unwrap();
     // println!("{:?}", t);
-    
+
     // println!("{:?}", o);
 
     // let x = 5;
@@ -148,9 +179,3 @@ fn main() {
 //     let v1 = unsafe { std::mem::transmute::<*mut usize, &mut A>(ptr2) } as &mut A;
 
 // }
-
-#[allow(dead_code)]
-fn event_handler(event: EventX) {
-    let data =  unsafe { std::mem::transmute::<*mut usize, &mut Test>(event.data) };
-    println!("event data {:?}",data);
-}

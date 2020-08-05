@@ -18,8 +18,8 @@ pub struct MiniDispatcher {
     event_listeners: HashMap<String, Vec<EventHandler>>,
 }
 
-#[allow(dead_code)] 
-fn find(vec: &mut Vec<EventHandler>, handler:EventFunction, thisobj:*mut usize) -> i16 {
+#[allow(dead_code)]
+fn find(vec: &mut Vec<EventHandler>, handler: EventFunction, thisobj: *mut usize) -> i16 {
     let mut index = 0;
 
     for value in vec.iter_mut() {
@@ -38,15 +38,15 @@ fn find(vec: &mut Vec<EventHandler>, handler:EventFunction, thisobj:*mut usize) 
 }
 
 impl MiniDispatcher {
-    #[allow(dead_code)] 
+    #[allow(dead_code)]
     pub fn new() -> Self {
         Self {
             event_listeners: HashMap::new(),
         }
     }
 
-    #[allow(dead_code)] 
-    pub fn on<T>(&mut self, event: &str, handler: EventFunction, thisobj:&T) {
+    #[allow(dead_code)]
+    pub fn on<T>(&mut self, event: &str, handler: EventFunction, thisobj: &T) {
         if false == self.event_listeners.contains_key(event) {
             self.event_listeners.insert(String::from(event), Vec::new());
         }
@@ -57,9 +57,12 @@ impl MiniDispatcher {
 
         let vec = self.event_listeners.get_mut(event).unwrap();
 
-        let i = find(vec, handler,ptr);
+        let i = find(vec, handler, ptr);
         if i == -1 {
-            vec.push(EventHandler { handler, thisobj:ptr });
+            vec.push(EventHandler {
+                handler,
+                thisobj: ptr,
+            });
         }
 
         // println!("{:?}", vec);
@@ -69,27 +72,29 @@ impl MiniDispatcher {
     }
 
     #[allow(dead_code)]
-    pub fn off<T>(&mut self,event: &str, handler: EventFunction, thisobj:&T) {
+    pub fn off<T>(&mut self, event: &str, handler: EventFunction, thisobj: &T) {
         if true == self.event_listeners.contains_key(event) {
             let vec = self.event_listeners.get_mut(event).unwrap();
-            
+
             let ptr = thisobj as *const _ as *mut usize;
-            let i = find(vec,handler,ptr);
-            if i != -1{
+            let i = find(vec, handler, ptr);
+            if i != -1 {
                 vec.remove(i as usize);
             }
-
-            println!("{:?}",vec);
-
         }
     }
 
-    pub fn simple_dispatch<T>(&mut self,event:&str,data:&T){
+
+    #[allow(dead_code)]
+    pub fn dispatch<T>(&mut self, event: &str, data: &T) {
         if true == self.event_listeners.contains_key(event) {
             let vec = self.event_listeners.get_mut(event).unwrap();
-            for handler in vec.iter().clone(){
+            for handler in vec.iter().clone() {
                 let f = handler.handler;
-                f(EventX{event:String::from(event),data:data as *const _ as *mut usize});
+                f(EventX {
+                    event: String::from(event),
+                    data: data as *const _ as *mut usize,
+                });
             }
         }
     }
